@@ -71,8 +71,8 @@ class OptionsState extends MusicBeatState
 
 	
 		var welcomeHereBruh:Array<String> = 
-		['Vs Impostor v1.0.2',
-		'in a good world this mods name is still updog'];
+		['Vs Impostor v1.0.3',
+		'yall see that sussus toogus video?'];
 		boundaries = buttons.length;
 		var notblack:FlxSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0x06080C);
 		add(notblack);

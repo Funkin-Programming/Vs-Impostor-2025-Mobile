@@ -69,7 +69,6 @@ class TitleState extends MusicBeatState
 	var opts:FlxTypedGroup<FlxSprite>;
 	var ott:FlxTypedGroup<FlxText>;
 	var colorSwap:ColorSwap;
-	var tv:FlxSprite;
 	var zared:FlxSprite;
 	var canSelect:Bool;
 	var v2Check = true; // SET THIS TO FALSE IN V2
@@ -86,7 +85,6 @@ class TitleState extends MusicBeatState
 		[172.1, 500.5, 'SH', 'Shop']
 	];
 	
-	var secretKey:Array<FlxKey> = [FlxKey.D, FlxKey.K];
 	var lastKeysPressed:Array<FlxKey> = [];
 	var keyTimer:Float = 0;
 	
@@ -161,7 +159,6 @@ class TitleState extends MusicBeatState
 		
 		if (FlxG.save.data.startedUp == null) // && !FlashingState.leftState)
 		{
-			
 			trace('No save data detected, moving to FlashingState');
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
@@ -224,15 +221,6 @@ class TitleState extends MusicBeatState
 		final snowAlpha = alreadyBeenInMenu ? 1 : 0;
 		
 		snowEmitter.alpha.set(snowAlpha);
-		
-		tv = new FlxSprite(1100, 450);
-		tv.frames = Paths.getSparrowAtlas("menu/main/tv");
-		tv.animation.addByPrefix('idle', 'TVIDLE', 24, false);
-		tv.animation.addByPrefix('on', 'TVON', 24, false);
-		tv.alpha = 0;
-		tv.scale.set(1, 1);
-		tv.scrollFactor.set(1, 1);
-		tv.antialiasing = ClientPrefs.globalAntialiasing;
 		
 		// Logo, probably make it a real sprite for later
 		lg = new FlxSprite(27, 82).loadGraphic(Paths.image('menu/main/Logo'));
@@ -353,7 +341,11 @@ class TitleState extends MusicBeatState
 	
 	override function update(elapsed:Float)
 	{
-		if (FlxG.save.data.startedUp == null) {super.update(elapsed); return;}
+		if (FlxG.save.data.startedUp == null)
+		{
+			super.update(elapsed);
+			return;
+		}
 		if (starFG != null)
 		{
 			starFG.x -= 0.12 * 60 * elapsed;
@@ -393,22 +385,6 @@ class TitleState extends MusicBeatState
 			// IF CAN PRESS ON THING
 			if (transitioning)
 			{
-				if (FlxG.mouse.justPressed && members.indexOf(tv) != -1 && tv.overlapsPoint(FlxG.mouse.getWorldPosition()))
-				{
-					tv.animation.play('on');
-					tv.x += -115;
-					tv.y += -80;
-					
-					FlxG.sound.play(Paths.sound('secret'));
-					new FlxTimer().start(1.4, function(tmr:FlxTimer) {
-						PlayState.storyDifficulty = 1;
-						PlayState.isStoryMode = false;
-						PlayState.SONG = Song.loadFromJson('bananas', 'bananas');
-						FlxG.switchState(new PlayState());
-						FlxG.mouse.visible = false;
-					});
-				}
-				
 				final finalKey:FlxKey = FlxG.keys.firstJustPressed();
 				
 				if (finalKey != -1)
@@ -431,16 +407,6 @@ class TitleState extends MusicBeatState
 						}
 						
 						return matched;
-					}
-					
-					if (checkForMatch(secretKey)) // dk
-					{
-						insert(members.indexOf(lg) - 1, tv);
-						FlxG.sound.play(Paths.sound('confirmMenu'));
-						FlxTween.tween(tv, {alpha: 1}, 2, {ease: FlxEase.linear});
-						FlxG.mouse.visible = true;
-						
-						secretKey = []; // prevents from doing multiple times
 					}
 					
 					if (checkForMatch([FlxKey.Z, FlxKey.A, FlxKey.R, FlxKey.E, FlxKey.D]) && members.indexOf(zared) == -1)
