@@ -14,82 +14,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
-          packages: 'platform-tools build-tools;33.0.0 platforms;android-28 ndk;25.2.9519653'
-
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
+      - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.2.5
 
-      - name: Verify Android Paths
+      - name: Install Haxelib
         run: |
-          echo "Checking Android SDK..."
-          ls -la /usr/local/lib/android/sdk/
-          echo "Checking Android NDK..."
-          ls -la /usr/local/lib/android/sdk/ndk/
-
-      - name: Install Haxelib and Setup Android
-        env:
-          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-          ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
-        run: |
-          mkdir -p assets/embeds/songs
-          mkdir -p assets/fonts
-          mkdir -p assets/shared
-          mkdir -p assets/videos
-          
           haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null
           haxelib install lime
           haxelib install openfl
           haxelib --never install flixel
           haxelib run lime setup flixel
-          haxelib install flixel-tools
-          haxelib install flixel-ui
           haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-tools
           haxelib install flxanimate
-          haxelib install hxvlc
           haxelib install hscript
-          
-          echo "Running lime setup android..."
-          printf "/usr/local/lib/android/sdk\n" | haxelib run lime setup android
-          
-          echo "Lime setup completed"
-          haxelib list
 
-      - name: Verify Lime Config
+      - name: Setup Android
         run: |
-          echo "Lime config content:"
-          cat ~/.lime/config.xml 2>/dev/null || echo "No config.xml found"
-          echo ""
-          echo "Lime directory contents:"
-          ls -la ~/.lime/
+          export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
+          export ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME
+          printf "$ANDROID_SDK_ROOT\n$ANDROID_NDK_LATEST_HOME\n" | haxelib run lime setup android
+
+      - name: Create Asset Directories
+        run: |
+          mkdir -p assets/embeds/songs
+          mkdir -p assets/fonts
+          mkdir -p assets/shared
 
       - name: Build APK
-        env:
-          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-          ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
         run: |
-          echo "Environment:"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-          echo "Lime config:"
-          cat ~/.lime/config.xml || echo "No lime config found"
-          echo "Building APK..."
-          haxelib run lime build android -release --app-version="1.0.0-${{ github.run_id }}" -v
+          export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
+          export ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME
+          haxelib run lime build android -release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: AndroidBuild
           path: export/release/android/bin/app/build/outputs/apk/release/*.apk
