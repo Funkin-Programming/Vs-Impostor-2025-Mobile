@@ -23,7 +23,6 @@ class Main extends Sprite
 		fps: 60
 	};
 
-	// You can pretty much ignore everything from here on - your code should go in your states.
 	public static var fpsVar:DebugDisplay;
 
 	static function __init__()
@@ -49,12 +48,6 @@ class Main extends Sprite
 			FlxGame
 			#end(startMeta.width, startMeta.height, #if !debug Splash #else startMeta.initialState #end, startMeta.fps, startMeta.fps, startMeta.skipSplash,
 				startMeta.startFullScreen);
-
-		// FlxG.game._customSoundTray wants just the class, it calls new from
-		// create() in there, which gets called when it's added to stage
-		// which is why it needs to be added before addChild(game) here
-
-		// Also btw game has to be a variable for this to work ig - Orbyy
 
 		@:privateAccess
 		game._customSoundTray = funkin.objects.FunkinSoundTray;
@@ -119,13 +112,9 @@ class FNFGame extends FlxGame
 {
 	private static function crashGame()
 	{
-		null
-		.draw();
+		null.draw();
 	}
 
-	/**
-	 * Used to instantiate the guts of the flixel game object once we have a valid reference to the root.
-	 */
 	override function create(_):Void
 	{
 		try
@@ -163,9 +152,6 @@ class FNFGame extends FlxGame
 		}
 	}
 
-	/**
-	 * Handles the `onEnterFrame` call and figures out how many updates and draw calls to do.
-	 */
 	override function onEnterFrame(_):Void
 	{
 		try
@@ -178,10 +164,6 @@ class FNFGame extends FlxGame
 		}
 	}
 
-	/**
-	 * This function is called by `step()` and updates the actual game state.
-	 * May be called multiple times per "frame" or draw call.
-	 */
 	override function update():Void
 	{
 		#if CRASH_TEST
@@ -198,9 +180,6 @@ class FNFGame extends FlxGame
 		}
 	}
 
-	/**
-	 * Goes through the game state and draws all the game objects and special effects.
-	 */
 	override function draw():Void
 	{
 		try
