@@ -31,8 +31,18 @@ jobs:
         with:
           haxe-version: 4.2.5
 
-      - name: Install Haxelib
+      - name: Install Haxelib and Setup Android
         run: |
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+          export ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
+          
+          mkdir -p assets/embeds/songs
+          mkdir -p assets/fonts
+          mkdir -p assets/shared
+          mkdir -p assets/videos
+          
           haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null
           haxelib install lime
@@ -48,17 +58,11 @@ jobs:
           haxelib install hscript
           haxelib list
 
-      - name: Set Android Environment
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "ANDROID_NDK=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
-
       - name: Build APK
         run: haxelib run lime build android -release --app-version="1.0.0-${{ github.run_id }}"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: AndroidBuild
-          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
+          name: Vs Impostor (2025)
+          path: export/release/android/bin/app/build/outputs/apk/debug/*.apk
