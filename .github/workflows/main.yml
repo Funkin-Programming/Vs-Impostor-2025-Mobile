@@ -61,20 +61,19 @@ jobs:
           haxelib install hxvlc
           haxelib install hscript
           
-          mkdir -p ~/.lime
-          cat > ~/.lime/config.xml << 'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <config>
-            <platform name="Android">
-              <architecture>armeabi-v7a</architecture>
-              <architecture>arm64-v8a</architecture>
-              <sdk path="/usr/local/lib/android/sdk" />
-              <ndk path="/usr/local/lib/android/sdk/ndk/25.2.9519653" />
-            </platform>
-          </config>
-          EOF
+          echo "Running lime setup android..."
+          printf "/usr/local/lib/android/sdk\n" | haxelib run lime setup android
           
+          echo "Lime setup completed"
           haxelib list
+
+      - name: Verify Lime Config
+        run: |
+          echo "Lime config content:"
+          cat ~/.lime/config.xml 2>/dev/null || echo "No config.xml found"
+          echo ""
+          echo "Lime directory contents:"
+          ls -la ~/.lime/
 
       - name: Build APK
         env:
