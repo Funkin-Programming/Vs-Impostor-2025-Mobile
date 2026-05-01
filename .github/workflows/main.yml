@@ -43,6 +43,7 @@ jobs:
           haxelib install flixel-tools
           haxelib install flixel-ui
           haxelib install flixel-addons
+          haxelib install flxanimate
           haxelib install hscript
           haxelib list
 
