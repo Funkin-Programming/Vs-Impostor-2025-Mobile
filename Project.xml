@@ -23,7 +23,6 @@
 	<define name="DISCORD_ALLOWED" if="cpp"/>
 
 	<assets path="assets/embeds" rename="assets" embed="true" />
-	<assets path="assets/embeds/songs" rename="assets/songs" library="songs" embed="true"/>
 	<assets path="assets/fonts" />
 	<assets path="assets/shared" exclude="*.ogg" if="web"/>
 	<assets path="assets/shared" exclude="*.mp3" unless="web"/>
