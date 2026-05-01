@@ -17,14 +17,14 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-levels: '28'
-          ndk-version: '25.2.9519653'
+          accept-android-sdk-licenses: true
+          packages: 'platform-tools build-tools;33.0.0 platforms;android-28 ndk;25.2.9519653'
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
@@ -59,4 +59,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: AndroidBuild
-          path: export/release/android/bin/app/build/outputs/apk/debug/*.apk
+          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
